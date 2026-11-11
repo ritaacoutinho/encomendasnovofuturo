@@ -83,11 +83,11 @@ ul{list-style:none;margin:8px 0 0;padding:0}
 /* campos */
 label{display:block;font-size:14px;font-weight:600;margin:16px 0 6px}
 label small{font-weight:400;color:var(--suave)}
-input[type=text],input[type=tel],input[type=email],textarea{
+input[type=text],input[type=tel],input[type=email],textarea,select{
   width:100%;font:inherit;color:inherit;background:var(--campo);
   padding:10px 12px;border:1px solid var(--campo-borda);border-bottom-color:var(--campo-base);border-radius:6px}
 textarea{min-height:76px;resize:vertical}
-input:focus,textarea:focus{outline:none;border-bottom-color:var(--accent);box-shadow:inset 0 -1px 0 var(--accent),0 0 0 3px color-mix(in srgb, var(--accent) 22%, transparent)}
+input:focus,textarea:focus,select:focus{outline:none;border-bottom-color:var(--accent);box-shadow:inset 0 -1px 0 var(--accent),0 0 0 3px color-mix(in srgb, var(--accent) 22%, transparent)}
 button:focus-visible,a:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
 fieldset{border:0;padding:0;margin:20px 0 0}
 legend{font-size:14px;font-weight:600;padding:0;margin-bottom:4px}
@@ -160,38 +160,51 @@ input[type=radio]{width:20px;height:20px;margin:0;accent-color:var(--accent)}
     <svg aria-hidden="true" viewBox="0 0 120 120" xmlns="http://www.w3.org/2000/svg"><circle cx="60" cy="60" r="58" fill="#FFFFFF"/><ellipse cx="92.0" cy="60.0" rx="9.5" ry="4.2" fill="#00613A" transform="rotate(70.0 92.0 60.0)"/><ellipse cx="86.9" cy="62.4" rx="9.5" ry="4.2" fill="#6AB335" transform="rotate(115.0 86.9 62.4)"/><ellipse cx="96.9" cy="63.2" rx="9.5" ry="4.2" fill="#2E8B4A" transform="rotate(115.0 96.9 63.2)"/><ellipse cx="91.5" cy="65.9" rx="9.5" ry="4.2" fill="#2E8B4A" transform="rotate(80.6 91.5 65.9)"/><ellipse cx="86.0" cy="67.3" rx="9.5" ry="4.2" fill="#1B7A45" transform="rotate(125.6 86.0 67.3)"/><ellipse cx="95.6" cy="69.9" rx="9.5" ry="4.2" fill="#6AB335" transform="rotate(125.6 95.6 69.9)"/><ellipse cx="89.8" cy="71.6" rx="9.5" ry="4.2" fill="#6AB335" transform="rotate(91.2 89.8 71.6)"/><ellipse cx="84.2" cy="71.9" rx="9.5" ry="4.2" fill="#00613A" transform="rotate(136.2 84.2 71.9)"/><ellipse cx="93.2" cy="76.3" rx="9.5" ry="4.2" fill="#1B7A45" transform="rotate(136.2 93.2 76.3)"/><ellipse cx="87.2" cy="76.8" rx="9.5" ry="4.2" fill="#1B7A45" transform="rotate(101.8 87.2 76.8)"/><ellipse cx="81.6" cy="76.2" rx="9.5" ry="4.2" fill="#2E8B4A" transform="rotate(146.8 81.6 76.2)"/><ellipse cx="89.6" cy="82.1" rx="9.5" ry="4.2" fill="#00613A" transform="rotate(146.8 89.6 82.1)"/><ellipse cx="83.6" cy="81.6" rx="9.5" ry="4.2" fill="#00613A" transform="rotate(112.4 83.6 81.6)"/><ellipse cx="78.3" cy="79.9" rx="9.5" ry="4.2" fill="#6AB335" transform="rotate(157.4 78.3 79.9)"/><ellipse cx="85.1" cy="87.2" rx="9.5" ry="4.2" fill="#2E8B4A" transform="rotate(157.4 85.1 87.2)"/><ellipse cx="79.3" cy="85.5" rx="9.5" ry="4.2" fill="#2E8B4A" transform="rotate(122.9 79.3 85.5)"/><ellipse cx="74.3" cy="82.9" rx="9.5" ry="4.2" fill="#1B7A45" transform="rotate(167.9 74.3 82.9)"/><ellipse cx="79.6" cy="91.4" rx="9.5" ry="4.2" fill="#6AB335" transform="rotate(167.9 79.6 91.4)"/><ellipse cx="74.3" cy="88.6" rx="9.5" ry="4.2" fill="#6AB335" transform="rotate(133.5 74.3 88.6)"/><ellipse cx="69.9" cy="85.1" rx="9.5" ry="4.2" fill="#00613A" transform="rotate(178.5 69.9 85.1)"/><ellipse cx="73.5" cy="94.4" rx="9.5" ry="4.2" fill="#1B7A45" transform="rotate(178.5 73.5 94.4)"/><ellipse cx="68.8" cy="90.8" rx="9.5" ry="4.2" fill="#1B7A45" transform="rotate(144.1 68.8 90.8)"/><ellipse cx="65.1" cy="86.5" rx="9.5" ry="4.2" fill="#2E8B4A" transform="rotate(189.1 65.1 86.5)"/><ellipse cx="67.0" cy="96.3" rx="9.5" ry="4.2" fill="#00613A" transform="rotate(189.1 67.0 96.3)"/><ellipse cx="63.0" cy="91.9" rx="9.5" ry="4.2" fill="#00613A" transform="rotate(154.7 63.0 91.9)"/><ellipse cx="60.1" cy="87.0" rx="9.5" ry="4.2" fill="#6AB335" transform="rotate(199.7 60.1 87.0)"/><ellipse cx="60.2" cy="97.0" rx="9.5" ry="4.2" fill="#2E8B4A" transform="rotate(199.7 60.2 97.0)"/><ellipse cx="57.0" cy="91.9" rx="9.5" ry="4.2" fill="#2E8B4A" transform="rotate(165.3 57.0 91.9)"/><ellipse cx="55.2" cy="86.6" rx="9.5" ry="4.2" fill="#1B7A45" transform="rotate(210.3 55.2 86.6)"/><ellipse cx="53.4" cy="96.4" rx="9.5" ry="4.2" fill="#6AB335" transform="rotate(210.3 53.4 96.4)"/><ellipse cx="51.2" cy="90.8" rx="9.5" ry="4.2" fill="#6AB335" transform="rotate(175.9 51.2 90.8)"/><ellipse cx="50.4" cy="85.2" rx="9.5" ry="4.2" fill="#00613A" transform="rotate(220.9 50.4 85.2)"/><ellipse cx="46.8" cy="94.6" rx="9.5" ry="4.2" fill="#1B7A45" transform="rotate(220.9 46.8 94.6)"/><ellipse cx="45.7" cy="88.6" rx="9.5" ry="4.2" fill="#1B7A45" transform="rotate(186.5 45.7 88.6)"/><ellipse cx="45.9" cy="83.0" rx="9.5" ry="4.2" fill="#2E8B4A" transform="rotate(231.5 45.9 83.0)"/><ellipse cx="40.7" cy="91.6" rx="9.5" ry="4.2" fill="#00613A" transform="rotate(231.5 40.7 91.6)"/><ellipse cx="40.7" cy="85.5" rx="9.5" ry="4.2" fill="#00613A" transform="rotate(197.1 40.7 85.5)"/><ellipse cx="41.9" cy="80.0" rx="9.5" ry="4.2" fill="#6AB335" transform="rotate(242.1 41.9 80.0)"/><ellipse cx="35.2" cy="87.5" rx="9.5" ry="4.2" fill="#2E8B4A" transform="rotate(242.1 35.2 87.5)"/><ellipse cx="36.4" cy="81.6" rx="9.5" ry="4.2" fill="#2E8B4A" transform="rotate(207.6 36.4 81.6)"/><ellipse cx="38.5" cy="76.4" rx="9.5" ry="4.2" fill="#1B7A45" transform="rotate(252.6 38.5 76.4)"/><ellipse cx="30.6" cy="82.4" rx="9.5" ry="4.2" fill="#6AB335" transform="rotate(252.6 30.6 82.4)"/><ellipse cx="32.8" cy="76.8" rx="9.5" ry="4.2" fill="#6AB335" transform="rotate(218.2 32.8 76.8)"/><ellipse cx="35.9" cy="72.2" rx="9.5" ry="4.2" fill="#00613A" transform="rotate(263.2 35.9 72.2)"/><ellipse cx="27.0" cy="76.7" rx="9.5" ry="4.2" fill="#1B7A45" transform="rotate(263.2 27.0 76.7)"/><ellipse cx="30.2" cy="71.6" rx="9.5" ry="4.2" fill="#1B7A45" transform="rotate(228.8 30.2 71.6)"/><ellipse cx="34.1" cy="67.5" rx="9.5" ry="4.2" fill="#2E8B4A" transform="rotate(273.8 34.1 67.5)"/><ellipse cx="24.5" cy="70.3" rx="9.5" ry="4.2" fill="#00613A" transform="rotate(273.8 24.5 70.3)"/><ellipse cx="28.5" cy="65.9" rx="9.5" ry="4.2" fill="#00613A" transform="rotate(239.4 28.5 65.9)"/><ellipse cx="33.1" cy="62.6" rx="9.5" ry="4.2" fill="#6AB335" transform="rotate(284.4 33.1 62.6)"/><ellipse cx="23.2" cy="63.6" rx="9.5" ry="4.2" fill="#2E8B4A" transform="rotate(284.4 23.2 63.6)"/><ellipse cx="28.0" cy="60.0" rx="9.5" ry="4.2" fill="#2E8B4A" transform="rotate(250.0 28.0 60.0)"/><ellipse cx="33.1" cy="57.6" rx="9.5" ry="4.2" fill="#1B7A45" transform="rotate(295.0 33.1 57.6)"/><ellipse cx="23.1" cy="56.8" rx="9.5" ry="4.2" fill="#6AB335" transform="rotate(295.0 23.1 56.8)"/><ellipse cx="28.5" cy="54.1" rx="9.5" ry="4.2" fill="#6AB335" transform="rotate(260.6 28.5 54.1)"/><ellipse cx="34.0" cy="52.7" rx="9.5" ry="4.2" fill="#00613A" transform="rotate(305.6 34.0 52.7)"/><ellipse cx="24.4" cy="50.1" rx="9.5" ry="4.2" fill="#1B7A45" transform="rotate(305.6 24.4 50.1)"/><ellipse cx="30.2" cy="48.4" rx="9.5" ry="4.2" fill="#1B7A45" transform="rotate(271.2 30.2 48.4)"/><ellipse cx="35.8" cy="48.1" rx="9.5" ry="4.2" fill="#2E8B4A" transform="rotate(316.2 35.8 48.1)"/><ellipse cx="26.8" cy="43.7" rx="9.5" ry="4.2" fill="#00613A" transform="rotate(316.2 26.8 43.7)"/><ellipse cx="32.8" cy="43.2" rx="9.5" ry="4.2" fill="#00613A" transform="rotate(281.8 32.8 43.2)"/><ellipse cx="38.4" cy="43.8" rx="9.5" ry="4.2" fill="#6AB335" transform="rotate(326.8 38.4 43.8)"/><ellipse cx="30.4" cy="37.9" rx="9.5" ry="4.2" fill="#2E8B4A" transform="rotate(326.8 30.4 37.9)"/><ellipse cx="36.4" cy="38.4" rx="9.5" ry="4.2" fill="#2E8B4A" transform="rotate(292.4 36.4 38.4)"/><ellipse cx="41.7" cy="40.1" rx="9.5" ry="4.2" fill="#1B7A45" transform="rotate(337.4 41.7 40.1)"/><ellipse cx="34.9" cy="32.8" rx="9.5" ry="4.2" fill="#6AB335" transform="rotate(337.4 34.9 32.8)"/><ellipse cx="40.7" cy="34.5" rx="9.5" ry="4.2" fill="#6AB335" transform="rotate(302.9 40.7 34.5)"/><ellipse cx="45.7" cy="37.1" rx="9.5" ry="4.2" fill="#00613A" transform="rotate(347.9 45.7 37.1)"/><ellipse cx="40.4" cy="28.6" rx="9.5" ry="4.2" fill="#1B7A45" transform="rotate(347.9 40.4 28.6)"/><ellipse cx="45.7" cy="31.4" rx="9.5" ry="4.2" fill="#1B7A45" transform="rotate(313.5 45.7 31.4)"/><ellipse cx="50.1" cy="34.9" rx="9.5" ry="4.2" fill="#2E8B4A" transform="rotate(358.5 50.1 34.9)"/><ellipse cx="46.5" cy="25.6" rx="9.5" ry="4.2" fill="#00613A" transform="rotate(358.5 46.5 25.6)"/><ellipse cx="51.2" cy="29.2" rx="9.5" ry="4.2" fill="#00613A" transform="rotate(324.1 51.2 29.2)"/><ellipse cx="54.9" cy="33.5" rx="9.5" ry="4.2" fill="#6AB335" transform="rotate(369.1 54.9 33.5)"/><ellipse cx="53.0" cy="23.7" rx="9.5" ry="4.2" fill="#2E8B4A" transform="rotate(369.1 53.0 23.7)"/><ellipse cx="57.0" cy="28.1" rx="9.5" ry="4.2" fill="#2E8B4A" transform="rotate(334.7 57.0 28.1)"/><ellipse cx="59.9" cy="33.0" rx="9.5" ry="4.2" fill="#1B7A45" transform="rotate(379.7 59.9 33.0)"/><ellipse cx="59.8" cy="23.0" rx="9.5" ry="4.2" fill="#6AB335" transform="rotate(379.7 59.8 23.0)"/><ellipse cx="63.0" cy="28.1" rx="9.5" ry="4.2" fill="#6AB335" transform="rotate(345.3 63.0 28.1)"/><ellipse cx="64.8" cy="33.4" rx="9.5" ry="4.2" fill="#00613A" transform="rotate(390.3 64.8 33.4)"/><ellipse cx="66.6" cy="23.6" rx="9.5" ry="4.2" fill="#1B7A45" transform="rotate(390.3 66.6 23.6)"/><ellipse cx="68.8" cy="29.2" rx="9.5" ry="4.2" fill="#1B7A45" transform="rotate(355.9 68.8 29.2)"/><ellipse cx="69.6" cy="34.8" rx="9.5" ry="4.2" fill="#2E8B4A" transform="rotate(400.9 69.6 34.8)"/><ellipse cx="73.2" cy="25.4" rx="9.5" ry="4.2" fill="#00613A" transform="rotate(400.9 73.2 25.4)"/><ellipse cx="74.3" cy="31.4" rx="9.5" ry="4.2" fill="#00613A" transform="rotate(366.5 74.3 31.4)"/><ellipse cx="74.1" cy="37.0" rx="9.5" ry="4.2" fill="#6AB335" transform="rotate(411.5 74.1 37.0)"/><ellipse cx="79.3" cy="28.4" rx="9.5" ry="4.2" fill="#2E8B4A" transform="rotate(411.5 79.3 28.4)"/><ellipse cx="79.3" cy="34.5" rx="9.5" ry="4.2" fill="#2E8B4A" transform="rotate(377.1 79.3 34.5)"/><ellipse cx="78.1" cy="40.0" rx="9.5" ry="4.2" fill="#1B7A45" transform="rotate(422.1 78.1 40.0)"/><ellipse cx="84.8" cy="32.5" rx="9.5" ry="4.2" fill="#6AB335" transform="rotate(422.1 84.8 32.5)"/><ellipse cx="83.6" cy="38.4" rx="9.5" ry="4.2" fill="#6AB335" transform="rotate(387.6 83.6 38.4)"/><ellipse cx="81.5" cy="43.6" rx="9.5" ry="4.2" fill="#00613A" transform="rotate(432.6 81.5 43.6)"/><ellipse cx="89.4" cy="37.6" rx="9.5" ry="4.2" fill="#1B7A45" transform="rotate(432.6 89.4 37.6)"/><ellipse cx="87.2" cy="43.2" rx="9.5" ry="4.2" fill="#1B7A45" transform="rotate(398.2 87.2 43.2)"/><ellipse cx="84.1" cy="47.8" rx="9.5" ry="4.2" fill="#2E8B4A" transform="rotate(443.2 84.1 47.8)"/><ellipse cx="93.0" cy="43.3" rx="9.5" ry="4.2" fill="#00613A" transform="rotate(443.2 93.0 43.3)"/><ellipse cx="89.8" cy="48.4" rx="9.5" ry="4.2" fill="#00613A" transform="rotate(408.8 89.8 48.4)"/><ellipse cx="85.9" cy="52.5" rx="9.5" ry="4.2" fill="#6AB335" transform="rotate(453.8 85.9 52.5)"/><ellipse cx="95.5" cy="49.7" rx="9.5" ry="4.2" fill="#2E8B4A" transform="rotate(453.8 95.5 49.7)"/><ellipse cx="91.5" cy="54.1" rx="9.5" ry="4.2" fill="#2E8B4A" transform="rotate(419.4 91.5 54.1)"/><ellipse cx="86.9" cy="57.4" rx="9.5" ry="4.2" fill="#1B7A45" transform="rotate(464.4 86.9 57.4)"/><ellipse cx="96.8" cy="56.4" rx="9.5" ry="4.2" fill="#6AB335" transform="rotate(464.4 96.8 56.4)"/><circle cx="90.1" cy="70.9" r="3.300" fill="#D32F2F"/><circle cx="89.1" cy="69.9" r=".9" fill="#fff" opacity=".7"/><circle cx="78.4" cy="86.2" r="3.300" fill="#D32F2F"/><circle cx="77.4" cy="85.2" r=".9" fill="#fff" opacity=".7"/><circle cx="54.4" cy="91.5" r="3.300" fill="#D32F2F"/><circle cx="53.4" cy="90.5" r=".9" fill="#fff" opacity=".7"/><circle cx="35.5" cy="80.6" r="3.300" fill="#D32F2F"/><circle cx="34.5" cy="79.6" r=".9" fill="#fff" opacity=".7"/><circle cx="29.9" cy="49.1" r="3.300" fill="#D32F2F"/><circle cx="28.9" cy="48.1" r=".9" fill="#fff" opacity=".7"/><circle cx="41.6" cy="33.8" r="3.300" fill="#D32F2F"/><circle cx="40.6" cy="32.8" r=".9" fill="#fff" opacity=".7"/><circle cx="70.9" cy="29.9" r="3.300" fill="#D32F2F"/><circle cx="69.9" cy="28.9" r=".9" fill="#fff" opacity=".7"/><circle cx="86.2" cy="41.6" r="3.300" fill="#D32F2F"/><circle cx="85.2" cy="40.6" r=".9" fill="#fff" opacity=".7"/><path d="M68.3 84.9 l1.600 4 l4 .4 l-3 2.800 l.9 4 l-3.500-2.200 l-3.500 2.200 l.9-4 l-3-2.800 l4-.4z" fill="#F7D31C"/><path d="M29.9 64.9 l1.600 4 l4 .4 l-3 2.800 l.9 4 l-3.500-2.200 l-3.500 2.200 l.9-4 l-3-2.800 l4-.4z" fill="#F7D31C"/><path d="M51.7 23.1 l1.600 4 l4 .4 l-3 2.800 l.9 4 l-3.500-2.200 l-3.500 2.200 l.9-4 l-3-2.800 l4-.4z" fill="#F7D31C"/><path d="M90.1 43.1 l1.600 4 l4 .4 l-3 2.800 l.9 4 l-3.500-2.200 l-3.500 2.200 l.9-4 l-3-2.800 l4-.4z" fill="#F7D31C"/><path d="M60 92 C46 80 36 88 42 98 C47 104 56 99 60 92Z" fill="#D32F2F"/><path d="M60 92 C74 80 84 88 78 98 C73 104 64 99 60 92Z" fill="#D32F2F"/><path d="M60 92 C50 86 44 90 46 95" stroke="#fff" stroke-opacity=".28" stroke-width="2" fill="none" stroke-linecap="round"/><path d="M56 96 L48 113 L56 109 L59 115Z" fill="#B71C1C"/><path d="M64 96 L72 113 L64 109 L61 115Z" fill="#B71C1C"/><circle cx="60" cy="93" r="5.200" fill="#E53935"/><circle cx="58.500" cy="91.500" r="1.600" fill="#fff" opacity=".4"/></svg>
   </section>
 
+  <div class="aviso" role="note">
+    <svg width="20" height="20" viewBox="0 0 20 20" aria-hidden="true"><circle cx="10" cy="10" r="9" fill="none" stroke="currentColor" stroke-width="1.6"/><rect x="9.1" y="8.6" width="1.8" height="6" rx=".9" fill="currentColor"/><circle cx="10" cy="5.9" r="1.1" fill="currentColor"/></svg>
+    <span><b>Entregas na zona de Lisboa, Oeiras, Cascais e Sintra, entre 1 e 15 de dezembro.</b> Mais abaixo pode escolher o horário preferencial.</span>
+  </div>
+
   <div id="carregar" class="suave" style="padding:24px 4px">A carregar o menu…</div>
   <div id="conteudo" hidden>
     <section class="card">
-      <h2>O que queres encomendar?</h2>
-      <p class="suave" style="margin:0">Escolhe as quantidades. O total é calculado automaticamente.</p>
+      <h2>O que quer encomendar?</h2>
+      <p class="suave" style="margin:0">Escolha as quantidades. O total é calculado automaticamente.</p>
       <ul id="lista"></ul>
     </section>
 
     <section class="card">
-      <h2>Os teus dados</h2>
+      <h2>Os seus dados</h2>
       <label for="nome" style="margin-top:12px">Nome</label>
       <input id="nome" type="text" autocomplete="name">
       <label for="telemovel">Telemóvel</label>
       <input id="telemovel" type="tel" autocomplete="tel" inputmode="tel">
-      <label for="email">Email <small>(opcional, para receberes o recibo)</small></label>
+      <label for="email">Email <small>(opcional, para receber o recibo)</small></label>
       <input id="email" type="email" autocomplete="email">
 
-      <fieldset>
-        <legend>Como queres receber a encomenda?</legend>
-        <label class="op"><input type="radio" name="receber" value="levantamento" checked>Vou levantar</label>
-        <label class="op"><input type="radio" name="receber" value="entrega">Quero receber em casa</label>
-      </fieldset>
-      <div id="morada-campos" hidden>
-        <label for="morada">Morada</label>
-        <input id="morada" type="text" autocomplete="street-address">
-        <label for="cp">Código postal</label>
-        <input id="cp" type="text" autocomplete="postal-code" inputmode="numeric" placeholder="0000-000">
-        <label for="localidade">Localidade</label>
-        <input id="localidade" type="text" autocomplete="address-level2">
-      </div>
+    </section>
 
-      <label for="notas">Notas <small>(opcional)</small></label>
+    <section class="card">
+      <h2>Entrega</h2>
+      <p class="suave" style="margin:0">Entregamos nos concelhos de Lisboa, Oeiras, Cascais e Sintra, entre 1 e 15 de dezembro.</p>
+      <label for="morada" style="margin-top:12px">Morada <small>(casa, escritório ou onde for melhor)</small></label>
+      <input id="morada" type="text" autocomplete="street-address">
+      <label for="cp">Código postal</label>
+      <input id="cp" type="text" autocomplete="postal-code" inputmode="numeric" placeholder="0000-000">
+      <label for="concelho">Concelho</label>
+      <select id="concelho">
+        <option value="">Escolha o concelho</option>
+        <option>Lisboa</option>
+        <option>Oeiras</option>
+        <option>Cascais</option>
+        <option>Sintra</option>
+      </select>
+      <fieldset>
+        <legend>Horário preferencial</legend>
+        <label class="op"><input type="radio" name="horario" value="10h-13h">Entre as 10h e as 13h</label>
+        <label class="op"><input type="radio" name="horario" value="13h-17h">Entre as 13h e as 17h</label>
+      </fieldset>
+      <label for="notas">Notas <small>(opcional, por exemplo o andar ou indicações)</small></label>
       <textarea id="notas"></textarea>
     </section>
 
@@ -199,7 +212,7 @@ input[type=radio]{width:20px;height:20px;margin:0;accent-color:var(--accent)}
       <h2>Pagamento</h2>
       <div class="total"><span class="suave">Total a pagar</span><strong id="total-pagar">0,00 €</strong></div>
       <div id="express"></div>
-      <p id="aviso-carteira" class="suave" hidden>Neste dispositivo não está disponível o Apple Pay nem o Google Pay. Paga com MB WAY.</p>
+      <p id="aviso-carteira" class="suave" hidden>Neste dispositivo não está disponível o Apple Pay nem o Google Pay. Pague com MB WAY.</p>
       <div class="ou">ou</div>
       <button class="pagar-btn b-mbway" id="b-mbway" type="button">Pagar com MB WAY</button>
       <p id="erro" role="alert"></p>
@@ -232,32 +245,33 @@ let cfg, stripe, elements;
 
 const esc = (s) => String(s).replace(/[&<>"]/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[c]));
 const setErro = (m) => { $("erro").textContent = m || ""; };
-const entrega = () => document.querySelector('input[name="receber"]:checked').value === "entrega";
 const total = () => cfg.itens.reduce((s, p) => s + p.preco * (qtd[p.id] || 0), 0);
 
 function mostrarSucesso(comResumo) {
   $("barra").hidden = true;
   if ($("carregar")) $("carregar").hidden = true;
-  let resumo = "";
+  let resumo = "", entregaInfo = "";
   if (comResumo && cfg) {
     const linhas = cfg.itens.filter((p) => qtd[p.id] > 0)
       .map((p) => `<li><span>${qtd[p.id]} × ${esc(p.nome)}</span><span>${euro.format(p.preco * qtd[p.id] / 100)}</span></li>`).join("");
+    const h = (document.querySelector('input[name="horario"]:checked') || { value: "" }).value.replace("-", " e as ");
+    entregaInfo = `<p>Entrega em: ${esc($("morada").value.trim())}, ${esc($("cp").value.trim())} ${esc($("concelho").value)}. Horário preferencial: entre as ${h}.</p>`;
     resumo = `<ul>${linhas}<li><strong>Total</strong><strong>${euro.format(total() / 100)}</strong></li></ul>`;
   }
   $("conteudo").hidden = false;
   $("conteudo").innerHTML = `<section class="card sucesso">
     <div class="ok">
       <svg width="40" height="40" viewBox="0 0 40 40" aria-hidden="true"><circle cx="20" cy="20" r="20" fill="var(--ok)"/><path d="M11 20.500l6 6 12-13" fill="none" stroke="#fff" stroke-width="3.200" stroke-linecap="round" stroke-linejoin="round"/></svg>
-      <h2>Obrigado pela tua encomenda!</h2>
+      <h2>Obrigado pela sua encomenda!</h2>
     </div>
-    <p>O pagamento foi recebido. Cada compra ajuda o Novo Futuro.</p>${resumo}</section>`;
+    <p>O pagamento foi recebido. Cada compra ajuda o Novo Futuro.</p>${resumo}${entregaInfo}<p>As entregas são feitas entre 1 e 15 de dezembro, na zona de Lisboa, Oeiras, Cascais e Sintra.</p></section>`;
   window.scrollTo({ top: 0 });
 }
 
 async function api(url, corpo) {
   const r = await fetch(url, { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify(corpo) });
   const d = await r.json().catch(() => ({}));
-  if (!r.ok) throw new Error(d.erro || "Ocorreu um erro. Tenta outra vez.");
+  if (!r.ok) throw new Error(d.erro || "Ocorreu um erro. Tente outra vez.");
   return d;
 }
 
@@ -265,21 +279,21 @@ function pedido() {
   return {
     itens: qtd,
     nome: $("nome").value, telemovel: $("telemovel").value, email: $("email").value, notas: $("notas").value,
-    receber: entrega() ? "entrega" : "levantamento",
-    morada: $("morada").value, cp: $("cp").value, localidade: $("localidade").value,
+    horario: (document.querySelector('input[name="horario"]:checked') || {}).value || "",
+    morada: $("morada").value, cp: $("cp").value, concelho: $("concelho").value,
   };
 }
 
 function validar() {
   setErro("");
-  if (total() <= 0) { setErro("Escolhe pelo menos um produto."); return false; }
-  if ($("nome").value.trim().length < 2) { setErro("Indica o teu nome."); $("nome").focus(); return false; }
-  if ($("telemovel").value.replace(/\D/g, "").length < 9) { setErro("Indica um telemóvel válido."); $("telemovel").focus(); return false; }
-  if (entrega()) {
-    if ($("morada").value.trim().length < 5) { setErro("Indica a morada de entrega."); $("morada").focus(); return false; }
-    if (!/^\d{4}-?\d{3}$/.test($("cp").value.trim())) { setErro("Indica o código postal (0000-000)."); $("cp").focus(); return false; }
-    if ($("localidade").value.trim().length < 2) { setErro("Indica a localidade."); $("localidade").focus(); return false; }
-  }
+  if (total() <= 0) { setErro("Escolha pelo menos um produto."); return false; }
+  if ($("nome").value.trim().length < 2) { setErro("Indique o seu nome."); $("nome").focus(); return false; }
+  if ($("telemovel").value.replace(/\D/g, "").length < 9) { setErro("Indique um telemóvel válido."); $("telemovel").focus(); return false; }
+  if ($("morada").value.trim().length < 5) { setErro("Indique a morada de entrega."); $("morada").focus(); return false; }
+  const cp = $("cp").value.trim();
+  if (!/^\d{4}-?\d{3}$/.test(cp)) { setErro("Indique o código postal (0000-000)."); $("cp").focus(); return false; }
+  if (!$("concelho").value) { setErro("Escolha o concelho de entrega."); $("concelho").focus(); return false; }
+  if (!document.querySelector('input[name="horario"]:checked')) { setErro("Escolha o horário preferencial."); return false; }
   return true;
 }
 
@@ -359,7 +373,7 @@ function iniciarPagamento() {
       mostrarSucesso(true);
     } catch (e) {
       event.paymentFailed({ reason: "fail" });
-      setErro(e.message || "O pagamento falhou. Tenta outra vez.");
+      setErro(e.message || "O pagamento falhou. Tente outra vez.");
     }
   });
 
@@ -384,7 +398,7 @@ async function arrancar() {
     if (!r.ok) throw new Error();
     cfg = await r.json();
   } catch {
-    $("carregar").textContent = "Não foi possível carregar o menu. Atualiza a página dentro de momentos.";
+    $("carregar").textContent = "Não foi possível carregar o menu. Atualize a página dentro de momentos.";
     return;
   }
   $("titulo").textContent = cfg.titulo;
@@ -392,8 +406,6 @@ async function arrancar() {
   $("carregar").hidden = true;
   $("conteudo").hidden = false;
   desenhar();
-  document.querySelectorAll('input[name="receber"]').forEach((r) =>
-    r.addEventListener("change", () => { $("morada-campos").hidden = !entrega(); }));
   iniciarPagamento();
 }
 arrancar();
