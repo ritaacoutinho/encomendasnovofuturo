@@ -13,6 +13,7 @@ const MENU = [
   { id: "estufadas",   nome: "Perdizes Estufadas",      desc: "6 unidades",  preco: 9000 },
 ];
 const MAX_POR_PRODUTO = 20;
+const CONCELHOS = ["Lisboa", "Oeiras", "Cascais", "Sintra"]; // zona de entrega
 // ============================================================
 
 const json = (status, body) => ({
@@ -42,22 +43,21 @@ function lerPedido(corpo) {
   const telemovel = String(corpo?.telemovel ?? "").trim().slice(0, 30);
   const email = String(corpo?.email ?? "").trim().slice(0, 150);
   const notas = String(corpo?.notas ?? "").trim().slice(0, 300);
-  const entrega = corpo?.receber === "entrega";
   const morada = String(corpo?.morada ?? "").trim().slice(0, 150);
   const cp = String(corpo?.cp ?? "").trim().slice(0, 10);
-  const localidade = String(corpo?.localidade ?? "").trim().slice(0, 80);
+  const concelho = String(corpo?.concelho ?? "");
+  const horario = String(corpo?.horario ?? "");
   if (nome.length < 2) throw new ErroPedido("Indica o teu nome.");
   if (telemovel.replace(/\D/g, "").length < 9) throw new ErroPedido("Indica um telemóvel válido.");
 
-  if (entrega) {
-    if (morada.length < 5) throw new ErroPedido("Indica a morada de entrega.");
-    if (!/^\d{4}-?\d{3}$/.test(cp)) throw new ErroPedido("Indica o código postal (0000-000).");
-    if (localidade.length < 2) throw new ErroPedido("Indica a localidade.");
-  }
-  const receber = entrega ? `Entrega: ${morada}, ${cp} ${localidade}` : "Levantamento";
+  if (morada.length < 5) throw new ErroPedido("Indica a morada de entrega.");
+  if (!/^\d{4}-?\d{3}$/.test(cp)) throw new ErroPedido("Indica o código postal (0000-000).");
+  if (!CONCELHOS.includes(concelho)) throw new ErroPedido("Escolhe o concelho de entrega.");
+  if (!["10h-13h", "13h-17h"].includes(horario)) throw new ErroPedido("Escolhe o horário preferencial.");
+  const receber = `Entrega: ${morada}, ${cp} (${concelho})`;
 
   const resumo = itens.map((i) => `${i.q}x ${i.nome}`).join(", ");
-  return { itens, total, nome, telemovel, email, notas, receber, resumo };
+  return { itens, total, nome, telemovel, email, notas, receber, horario, resumo };
 }
 
 async function stripe(caminho, params) {
@@ -85,6 +85,7 @@ function metadados(prefixo, p) {
     [`${prefixo}[telemovel]`, p.telemovel],
     [`${prefixo}[pedido]`, p.resumo.slice(0, 500)],
     [`${prefixo}[receber]`, p.receber],
+    [`${prefixo}[horario]`, p.horario],
   ];
   if (p.notas) m.push([`${prefixo}[notas]`, p.notas]);
   return m;
