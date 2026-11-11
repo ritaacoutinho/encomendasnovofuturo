@@ -5,11 +5,11 @@ const TITULO = "Natal no Novo Futuro";
 const NOTA = ""; // Texto opcional mostrado no fim (ex.: informação sobre levantamento/entrega)
 
 const MENU = [
-  { id: "castanhas",   nome: "Castanhas Caramelizadas", desc: "500 g",       preco: 1500 },
   { id: "geleia",      nome: "Geleia de Piri-Piri",     desc: "",            preco: 800  },
   { id: "piripiri",    nome: "Piri-Piri",               desc: "",            preco: 1000 },
-  { id: "crepes",      nome: "Crepes de Camarão",       desc: "12 unidades", preco: 4500 },
+  { id: "castanhas",   nome: "Castanhas Caramelizadas", desc: "500 g",       preco: 1500 },
   { id: "escabeche",   nome: "Perdizes de Escabeche",   desc: "2 unidades",  preco: 4000 },
+  { id: "crepes",      nome: "Crepes de Camarão",       desc: "12 unidades", preco: 4500 },
   { id: "estufadas",   nome: "Perdizes Estufadas",      desc: "6 unidades",  preco: 9000 },
 ];
 const MAX_POR_PRODUTO = 20;
