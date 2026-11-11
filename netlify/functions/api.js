@@ -37,7 +37,7 @@ function lerPedido(corpo) {
       total += p.preco * q; // o preço vem sempre do servidor
     }
   }
-  if (!itens.length) throw new ErroPedido("Escolhe pelo menos um produto.");
+  if (!itens.length) throw new ErroPedido("Escolha pelo menos um produto.");
 
   const nome = String(corpo?.nome ?? "").trim().slice(0, 100);
   const telemovel = String(corpo?.telemovel ?? "").trim().slice(0, 30);
@@ -47,13 +47,13 @@ function lerPedido(corpo) {
   const cp = String(corpo?.cp ?? "").trim().slice(0, 10);
   const concelho = String(corpo?.concelho ?? "");
   const horario = String(corpo?.horario ?? "");
-  if (nome.length < 2) throw new ErroPedido("Indica o teu nome.");
-  if (telemovel.replace(/\D/g, "").length < 9) throw new ErroPedido("Indica um telemóvel válido.");
+  if (nome.length < 2) throw new ErroPedido("Indique o seu nome.");
+  if (telemovel.replace(/\D/g, "").length < 9) throw new ErroPedido("Indique um telemóvel válido.");
 
-  if (morada.length < 5) throw new ErroPedido("Indica a morada de entrega.");
-  if (!/^\d{4}-?\d{3}$/.test(cp)) throw new ErroPedido("Indica o código postal (0000-000).");
-  if (!CONCELHOS.includes(concelho)) throw new ErroPedido("Escolhe o concelho de entrega.");
-  if (!["10h-13h", "13h-17h"].includes(horario)) throw new ErroPedido("Escolhe o horário preferencial.");
+  if (morada.length < 5) throw new ErroPedido("Indique a morada de entrega.");
+  if (!/^\d{4}-?\d{3}$/.test(cp)) throw new ErroPedido("Indique o código postal (0000-000).");
+  if (!CONCELHOS.includes(concelho)) throw new ErroPedido("Escolha o concelho de entrega.");
+  if (!["10h-13h", "13h-17h"].includes(horario)) throw new ErroPedido("Escolha o horário preferencial.");
   const receber = `Entrega: ${morada}, ${cp} (${concelho})`;
 
   const resumo = itens.map((i) => `${i.q}x ${i.nome}`).join(", ");
@@ -74,7 +74,7 @@ async function stripe(caminho, params) {
   const dados = await r.json();
   if (!r.ok) {
     console.error("Erro Stripe:", JSON.stringify(dados));
-    throw new Error("Não foi possível iniciar o pagamento. Tenta outra vez.");
+    throw new Error("Não foi possível iniciar o pagamento. Tente outra vez.");
   }
   return dados;
 }
