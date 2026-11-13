@@ -5,7 +5,6 @@
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>Natal no Novo Futuro – Encomendas</title>
 <meta name="description" content="Encomendas de comida de Natal. O valor reverte para o Novo Futuro.">
-<script src="https://js.stripe.com/v3/"></script>
 <style>
 /* ===== Cores da marca: altera só aqui ===== */
 :root{
@@ -148,6 +147,14 @@ input[type=radio]{width:20px;height:20px;margin:0;accent-color:var(--accent)}
 @keyframes gira{to{transform:rotate(360deg)}}
 @media (prefers-reduced-motion: reduce){.roda{animation-duration:3s}}
 @media (min-width:700px){.hero svg{width:116px;height:116px}.fundo-modal{align-items:center}.modal{border-radius:12px}}
+
+.armadilha{position:absolute;left:-9999px;width:1px;height:1px;overflow:hidden;opacity:0}
+.pag{margin:16px 0}
+.pag-linha{display:flex;align-items:center;gap:12px;padding:12px 0;border-top:1px solid var(--card-borda)}
+.pag-linha dt{flex:none;width:10em;color:var(--suave);font-size:14px}
+.pag-linha dd{margin:0;flex:1;font-weight:600;word-break:break-all;font-variant-numeric:tabular-nums}
+.sucesso .pag-linha button{margin:0;height:36px;padding:0 14px;font-size:14px}
+@media (max-width:480px){.pag-linha{flex-wrap:wrap}.pag-linha dt{width:100%}.pag-linha dd{flex:1 1 60%}}
 </style>
 </head>
 <body>
@@ -179,8 +186,9 @@ input[type=radio]{width:20px;height:20px;margin:0;accent-color:var(--accent)}
       <input id="nome" type="text" autocomplete="name">
       <label for="telemovel">Telemóvel</label>
       <input id="telemovel" type="tel" autocomplete="tel" inputmode="tel">
-      <label for="email">Email <small>(opcional, para receber o recibo)</small></label>
+      <label for="email">Email <small>(opcional, para receber a confirmação e os dados de pagamento)</small></label>
       <input id="email" type="email" autocomplete="email">
+      <div class="armadilha" aria-hidden="true"><label for="website">Não preencher</label><input id="website" type="text" tabindex="-1" autocomplete="off"></div>
 
     </section>
 
@@ -208,13 +216,11 @@ input[type=radio]{width:20px;height:20px;margin:0;accent-color:var(--accent)}
       <textarea id="notas"></textarea>
     </section>
 
-    <section class="card" id="pagar" hidden>
-      <h2>Pagamento</h2>
-      <div class="total"><span class="suave">Total a pagar</span><strong id="total-pagar">0,00 €</strong></div>
-      <div id="express"></div>
-      <p id="aviso-carteira" class="suave" hidden>Neste dispositivo não está disponível o Apple Pay nem o Google Pay. Pague com MB WAY.</p>
-      <div class="ou">ou</div>
-      <button class="pagar-btn b-mbway" id="b-mbway" type="button">Pagar com MB WAY</button>
+    <section class="card" id="confirmar" hidden>
+      <h2>Confirmar encomenda</h2>
+      <div class="total"><span class="suave">Total</span><strong id="total-pagar">0,00 €</strong></div>
+      <button class="pagar-btn b-mbway" id="btn-confirmar" type="button">Confirmar encomenda</button>
+      <p class="suave" style="margin:8px 0 0">Depois de confirmar, mostramos o IBAN e o valor a transferir. A encomenda só fica garantida depois de recebermos o pagamento.</p>
       <p id="erro" role="alert"></p>
     </section>
     <p class="suave" id="nota" hidden></p>
@@ -224,11 +230,14 @@ input[type=radio]{width:20px;height:20px;margin:0;accent-color:var(--accent)}
 <div class="barra" id="barra" hidden>
   <div class="in">
     <span class="t">Total<b id="total-barra">0,00 €</b></span>
-    <a href="#pagar">Ir para o pagamento</a>
+    <a href="#confirmar">Ir para a confirmação</a>
   </div>
 </div>
 
 <script>
+// Endereço da folha do Google (a «aplicação web» do Apps Script). Cole aqui quando estiver pronto.
+const ENDERECO_FOLHA = "https://script.google.com/macros/s/AKfycbxVhMjNGrZEeWVnYc0q1jIZ4T4l9W7L_PRIQiR9E9Y-2LxYr1fU-OTnv7jIjrNBDmOy/exec";
+
 const ICONS = {
   castanhas: `<svg viewBox="0 0 64 64" xmlns="http://www.w3.org/2000/svg"><defs><linearGradient id="cn1" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#B5622E"/><stop offset="1" stop-color="#5A2D12"/></linearGradient></defs><ellipse cx="32" cy="57" rx="22" ry="3.5" fill="#000" opacity=".12"/><g transform="translate(19 43) rotate(-10) scale(0.78)"><path d="M0 -15 C9 -15 15 -5 15 3 C15 11 9 16 0 16 C-9 16 -15 11 -15 3 C-15 -5 -9 -15 0 -15Z" fill="url(#cn1)"/><path d="M-5 -13 Q0 -19 5 -13 Q0 -10 -5 -13Z" fill="#4A2410"/><ellipse cx="0" cy="14" rx="8" ry="3" fill="#E3B27A"/><path d="M-9 -4 Q-8 -10 -3 -11" stroke="#fff" stroke-opacity=".55" stroke-width="2.6" stroke-linecap="round" fill="none"/><path d="M-12 6 Q-10 12 -4 14" stroke="#F5C35A" stroke-opacity=".55" stroke-width="2" stroke-linecap="round" fill="none"/></g><g transform="translate(45 43) rotate(12) scale(0.78)"><path d="M0 -15 C9 -15 15 -5 15 3 C15 11 9 16 0 16 C-9 16 -15 11 -15 3 C-15 -5 -9 -15 0 -15Z" fill="url(#cn1)"/><path d="M-5 -13 Q0 -19 5 -13 Q0 -10 -5 -13Z" fill="#4A2410"/><ellipse cx="0" cy="14" rx="8" ry="3" fill="#E3B27A"/><path d="M-9 -4 Q-8 -10 -3 -11" stroke="#fff" stroke-opacity=".55" stroke-width="2.6" stroke-linecap="round" fill="none"/><path d="M-12 6 Q-10 12 -4 14" stroke="#F5C35A" stroke-opacity=".55" stroke-width="2" stroke-linecap="round" fill="none"/></g><g transform="translate(32 30) rotate(0) scale(0.8)"><path d="M0 -15 C9 -15 15 -5 15 3 C15 11 9 16 0 16 C-9 16 -15 11 -15 3 C-15 -5 -9 -15 0 -15Z" fill="url(#cn1)"/><path d="M-5 -13 Q0 -19 5 -13 Q0 -10 -5 -13Z" fill="#4A2410"/><ellipse cx="0" cy="14" rx="8" ry="3" fill="#E3B27A"/><path d="M-9 -4 Q-8 -10 -3 -11" stroke="#fff" stroke-opacity=".55" stroke-width="2.6" stroke-linecap="round" fill="none"/><path d="M-12 6 Q-10 12 -4 14" stroke="#F5C35A" stroke-opacity=".55" stroke-width="2" stroke-linecap="round" fill="none"/></g></svg>`,
   geleia: `<svg viewBox="0 0 64 64" xmlns="http://www.w3.org/2000/svg"><defs><linearGradient id="gj1" x1="0" y1="0" x2="1" y2="0"><stop offset="0" stop-color="#FF7043"/><stop offset=".55" stop-color="#E53935"/><stop offset="1" stop-color="#B71C1C"/></linearGradient><linearGradient id="gj2" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#F7D774"/><stop offset="1" stop-color="#D49A1F"/></linearGradient></defs><ellipse cx="32" cy="58" rx="19" ry="3" fill="#000" opacity=".12"/><rect x="14" y="17" width="36" height="40" rx="10" fill="#DDF1F4" opacity=".9"/><rect x="16.500" y="21" width="31" height="34" rx="8" fill="url(#gj1)"/><rect x="18.500" y="25" width="4" height="24" rx="2" fill="#fff" opacity=".35"/><rect x="22" y="33" width="21" height="14" rx="3" fill="#FFF6E0"/><path d="M27 41 q4 -6 10 -2 q-2 6 -8 5 z" fill="#D32F2F"/><path d="M36.500 38.500 q1 -2.500 3 -3" stroke="#2E7D32" stroke-width="1.600" stroke-linecap="round" fill="none"/><rect x="15" y="9" width="34" height="10" rx="3.500" fill="url(#gj2)"/><rect x="15" y="15.500" width="34" height="3.500" rx="1.700" fill="#B9801A" opacity=".55"/><rect x="19" y="11" width="9" height="2" rx="1" fill="#fff" opacity=".5"/></svg>`,
@@ -237,41 +246,39 @@ const ICONS = {
   escabeche: `<svg viewBox="0 0 64 64" xmlns="http://www.w3.org/2000/svg"><defs><linearGradient id="eb1" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#C08B5C"/><stop offset="1" stop-color="#8E5B33"/></linearGradient></defs><ellipse cx="32" cy="58" rx="22" ry="3" fill="#000" opacity=".12"/><g transform="translate(0 2) scale(.94)"><path d="M30 49 L28 58 M36 49 L38 58" stroke="#D32F2F" stroke-width="2.600" stroke-linecap="round"/><path d="M25 58.500 h6 M35 58.500 h6" stroke="#D32F2F" stroke-width="2.200" stroke-linecap="round"/><path d="M14 36 L2 29 L5 41 Z" fill="#8A5530"/><path d="M14 36 L4 36 L6 42 Z" fill="#C5683A"/><path d="M12 40 C12 28 24 24 34 27 C42 29 48 34 47 42 C46 50 38 54 29 53 C19 52 12 48 12 40Z" fill="url(#eb1)"/><path d="M26 53 C19 51 14 47 13 42 C22 46 36 48 46 44 C44 50 36 54 26 53Z" fill="#E9D3B2"/><path d="M36 28 C44 24 49 22 48 14 C50 8 58 8 58 15 C58 22 52 30 45 36 Z" fill="#B07D4F"/><circle cx="52.500" cy="15" r="9" fill="#B07D4F"/><ellipse cx="54" cy="18" rx="5.600" ry="4.600" fill="#FBFBFA"/><path d="M45 24 Q52 30 58 22" stroke="#2B2B2B" stroke-width="2.200" stroke-linecap="round" fill="none"/><path d="M47 27 l1 2 M50 28.500 l.6 2.200 M53 28 l0 2.300 M56 26 l-.5 2.200" stroke="#2B2B2B" stroke-width="1.400" stroke-linecap="round"/><circle cx="54" cy="13.500" r="1.600" fill="#1d1d1d"/><circle cx="54.500" cy="13" r=".5" fill="#fff"/><path d="M60 14 L64 16.500 L60 18.500 Z" fill="#D32F2F"/><path d="M20 38 C26 31 36 31 42 36 C36 41 26 43 20 38Z" fill="#9C6A3E"/><path d="M23 37 Q31 33 40 36 M24 39.500 Q31 37 38.500 39" stroke="#E2C9A4" stroke-width="1.400" stroke-linecap="round" fill="none" opacity=".8"/><path d="M16 46 l4 -3 M21 48 l4 -3 M27 49.500 l3 -3.500" stroke="#4E2F17" stroke-width="2" stroke-linecap="round"/><g transform="translate(8 52) rotate(-20)"><ellipse cx="0" cy="0" rx="6" ry="2.800" fill="#43A047"/><path d="M-5 0 h10" stroke="#2E7D32" stroke-width=".9"/></g></g></svg>`,
   estufadas: `<svg viewBox="0 0 64 64" xmlns="http://www.w3.org/2000/svg"><defs><linearGradient id="es1" x1="0" y1="0" x2="1" y2="0"><stop offset="0" stop-color="#F58A2E"/><stop offset=".6" stop-color="#E5651A"/><stop offset="1" stop-color="#BB4A10"/></linearGradient><linearGradient id="es2" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#F9A24A"/><stop offset="1" stop-color="#D9601A"/></linearGradient></defs><ellipse cx="32" cy="59" rx="24" ry="3" fill="#000" opacity=".12"/><path d="M17 18 c-3-4 3-6 0-10 M26 16 c-3-4 3-6 0-10 M35 18 c-3-4 3-6 0-10" stroke="#9AA7AD" stroke-width="2.200" stroke-linecap="round" fill="none" opacity=".75"/><path d="M44 14 c-3-4 3-6 0-10" stroke="#9AA7AD" stroke-width="2.200" stroke-linecap="round" fill="none" opacity=".75"/><rect x="3" y="33" width="9" height="6.500" rx="3.200" fill="#3B3B3B"/><rect x="52" y="33" width="9" height="6.500" rx="3.200" fill="#3B3B3B"/><path d="M8 30 H56 V42 C56 52 46 58 32 58 S8 52 8 42Z" fill="url(#es1)"/><path d="M12 36 V42 C12 49 18 53 24 55" stroke="#fff" stroke-opacity=".3" stroke-width="3" stroke-linecap="round" fill="none"/><path d="M9 31 C9 20 55 20 55 31Z" fill="url(#es2)"/><rect x="6" y="28.500" width="52" height="5" rx="2.500" fill="#BB4A10"/><rect x="6" y="28.500" width="52" height="2" rx="1" fill="#fff" opacity=".25"/><circle cx="32" cy="21" r="4" fill="#3B3B3B"/><circle cx="31" cy="19.800" r="1.200" fill="#fff" opacity=".5"/><path d="M16 28 C16 24 24 22 30 22" stroke="#fff" stroke-opacity=".35" stroke-width="2.200" stroke-linecap="round" fill="none"/></svg>`
 };
+const PRATO = `<svg viewBox="0 0 64 64" xmlns="http://www.w3.org/2000/svg"><ellipse cx="32" cy="55" rx="22" ry="3" fill="#000" opacity=".12"/><circle cx="32" cy="32" r="23" fill="#fff" stroke="#D5D5D5" stroke-width="2"/><circle cx="32" cy="32" r="15" fill="#F2F2F2" stroke="#E2E2E2"/><path d="M12 14v14M16 14v14M20 14v14M16 28v22" stroke="#9AA7AD" stroke-width="2" stroke-linecap="round" fill="none" transform="translate(-6 0) scale(.9)"/><path d="M52 14c-4 3-5 9-4 15h4V14zM52 29v21" stroke="#9AA7AD" stroke-width="2" stroke-linecap="round" fill="none"/></svg>`;
+function icone(nome) {
+  const n = String(nome).toLowerCase();
+  if (n.includes("geleia")) return ICONS.geleia;
+  if (n.includes("piri")) return ICONS.piripiri;
+  if (n.includes("castanha")) return ICONS.castanhas;
+  if (n.includes("escabeche")) return ICONS.escabeche;
+  if (n.includes("estufad")) return ICONS.estufadas;
+  if (n.includes("crepe")) return ICONS.crepes;
+  return PRATO;
+}
 
 const euro = new Intl.NumberFormat("pt-PT", { style: "currency", currency: "EUR" });
 const $ = (id) => document.getElementById(id);
+const esc = (s) => String(s ?? "").replace(/[&<>"']/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]));
 const qtd = {};
-let cfg, stripe, elements;
+let cfg;
 
-const esc = (s) => String(s).replace(/[&<>"]/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[c]));
 const setErro = (m) => { $("erro").textContent = m || ""; };
 const total = () => cfg.itens.reduce((s, p) => s + p.preco * (qtd[p.id] || 0), 0);
+const horarioTxt = () => (document.querySelector('input[name="horario"]:checked') || { value: "" }).value.replace("-", " e as ");
 
-function mostrarSucesso(comResumo) {
-  $("barra").hidden = true;
-  if ($("carregar")) $("carregar").hidden = true;
-  let resumo = "", entregaInfo = "";
-  if (comResumo && cfg) {
-    const linhas = cfg.itens.filter((p) => qtd[p.id] > 0)
-      .map((p) => `<li><span>${qtd[p.id]} × ${esc(p.nome)}</span><span>${euro.format(p.preco * qtd[p.id] / 100)}</span></li>`).join("");
-    const h = (document.querySelector('input[name="horario"]:checked') || { value: "" }).value.replace("-", " e as ");
-    entregaInfo = `<p>Entrega em: ${esc($("morada").value.trim())}, ${esc($("cp").value.trim())} ${esc($("concelho").value)}. Horário preferencial: entre as ${h}.</p>`;
-    resumo = `<ul>${linhas}<li><strong>Total</strong><strong>${euro.format(total() / 100)}</strong></li></ul>`;
+async function enviar(corpo) {
+  let r;
+  try {
+    // texto simples, para o browser não fazer verificações extra (CORS) ao falar com a folha
+    r = await fetch(ENDERECO_FOLHA, { method: "POST", headers: { "Content-Type": "text/plain;charset=utf-8" }, body: JSON.stringify(corpo) });
+  } catch {
+    throw new Error("Não foi possível ligar. Verifique a internet. Se tiver dúvidas sobre se a encomenda ficou registada, contacte-nos antes de repetir.");
   }
-  $("conteudo").hidden = false;
-  $("conteudo").innerHTML = `<section class="card sucesso">
-    <div class="ok">
-      <svg width="40" height="40" viewBox="0 0 40 40" aria-hidden="true"><circle cx="20" cy="20" r="20" fill="var(--ok)"/><path d="M11 20.500l6 6 12-13" fill="none" stroke="#fff" stroke-width="3.200" stroke-linecap="round" stroke-linejoin="round"/></svg>
-      <h2>Obrigado pela sua encomenda!</h2>
-    </div>
-    <p>O pagamento foi recebido. Cada compra ajuda o Novo Futuro.</p>${resumo}${entregaInfo}<p>As entregas são feitas entre 1 e 15 de dezembro, na zona de Lisboa, Oeiras, Cascais e Sintra.</p></section>`;
-  window.scrollTo({ top: 0 });
-}
-
-async function api(url, corpo) {
-  const r = await fetch(url, { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify(corpo) });
   const d = await r.json().catch(() => ({}));
-  if (!r.ok) throw new Error(d.erro || "Ocorreu um erro. Tente outra vez.");
+  if (d.erro) throw new Error(d.erro);
+  if (!d.ok) throw new Error("Não foi possível registar a encomenda. Tente outra vez.");
   return d;
 }
 
@@ -279,8 +286,9 @@ function pedido() {
   return {
     itens: qtd,
     nome: $("nome").value, telemovel: $("telemovel").value, email: $("email").value, notas: $("notas").value,
-    horario: (document.querySelector('input[name="horario"]:checked') || {}).value || "",
     morada: $("morada").value, cp: $("cp").value, concelho: $("concelho").value,
+    horario: (document.querySelector('input[name="horario"]:checked') || {}).value || "",
+    website: $("website").value,
   };
 }
 
@@ -290,8 +298,7 @@ function validar() {
   if ($("nome").value.trim().length < 2) { setErro("Indique o seu nome."); $("nome").focus(); return false; }
   if ($("telemovel").value.replace(/\D/g, "").length < 9) { setErro("Indique um telemóvel válido."); $("telemovel").focus(); return false; }
   if ($("morada").value.trim().length < 5) { setErro("Indique a morada de entrega."); $("morada").focus(); return false; }
-  const cp = $("cp").value.trim();
-  if (!/^\d{4}-?\d{3}$/.test(cp)) { setErro("Indique o código postal (0000-000)."); $("cp").focus(); return false; }
+  if (!/^\d{4}-?\d{3}$/.test($("cp").value.trim())) { setErro("Indique o código postal (0000-000)."); $("cp").focus(); return false; }
   if (!$("concelho").value) { setErro("Escolha o concelho de entrega."); $("concelho").focus(); return false; }
   if (!document.querySelector('input[name="horario"]:checked')) { setErro("Escolha o horário preferencial."); return false; }
   return true;
@@ -302,23 +309,22 @@ function atualizar() {
   $("total-barra").textContent = euro.format(t / 100);
   $("total-pagar").textContent = euro.format(t / 100);
   $("barra").hidden = t <= 0;
-  $("pagar").hidden = t <= 0;
-  if (t > 0 && elements) elements.update({ amount: t });
+  $("confirmar").hidden = t <= 0;
 }
 
 function desenhar() {
   $("lista").innerHTML = cfg.itens.map((p) => `
-    <li class="item" id="i-${p.id}">
-      <div class="tile" aria-hidden="true">${ICONS[p.id] || ""}</div>
+    <li class="item" id="i-${esc(p.id)}">
+      <div class="tile" aria-hidden="true">${icone(p.nome)}</div>
       <div class="info">
         <span class="nome">${esc(p.nome)}</span>
         <span class="desc">${esc(p.desc || "")}</span>
         <span class="preco">${euro.format(p.preco / 100)}</span>
       </div>
       <div class="stepper" role="group" aria-label="Quantidade de ${esc(p.nome)}">
-        <button type="button" data-id="${p.id}" data-d="-1" aria-label="Menos ${esc(p.nome)}" disabled>−</button>
-        <span class="qtd" id="q-${p.id}" aria-live="polite">0</span>
-        <button type="button" data-id="${p.id}" data-d="1" aria-label="Mais ${esc(p.nome)}">+</button>
+        <button type="button" data-id="${esc(p.id)}" data-d="-1" aria-label="Menos ${esc(p.nome)}" disabled>−</button>
+        <span class="qtd" id="q-${esc(p.id)}" aria-live="polite">0</span>
+        <button type="button" data-id="${esc(p.id)}" data-d="1" aria-label="Mais ${esc(p.nome)}">+</button>
       </div>
     </li>`).join("");
 
@@ -336,77 +342,84 @@ function desenhar() {
   });
 }
 
-function iniciarPagamento() {
-  stripe = Stripe(cfg.publishableKey);
-  const verde = getComputedStyle(document.documentElement).getPropertyValue("--accent").trim() || "#00613A";
-  elements = stripe.elements({
-    mode: "payment", amount: 100, currency: "eur", locale: "pt",
-    paymentMethodTypes: ["card"],
-    appearance: { variables: { colorPrimary: verde, fontFamily: "Segoe UI, system-ui, sans-serif", borderRadius: "6px" } },
-  });
+async function copiar(texto, botao) {
+  try { await navigator.clipboard.writeText(texto); }
+  catch {
+    const t = document.createElement("textarea");
+    t.value = texto; document.body.appendChild(t); t.select();
+    try { document.execCommand("copy"); } catch {}
+    t.remove();
+  }
+  const antes = botao.textContent;
+  botao.textContent = "Copiado";
+  setTimeout(() => { botao.textContent = antes; }, 1500);
+}
+document.addEventListener("click", (e) => {
+  const b = e.target.closest("[data-copiar]");
+  if (b) copiar(b.dataset.copiar, b);
+});
 
-  const express = elements.create("expressCheckout", {
-    buttonHeight: 48,
-    buttonType: { applePay: "buy", googlePay: "buy" },
-    paymentMethods: { applePay: "auto", googlePay: "auto", link: "never", amazonPay: "never", paypal: "never", klarna: "never" },
-  });
-  express.mount("#express");
-
-  express.on("ready", ({ availablePaymentMethods }) => {
-    const ok = !!(availablePaymentMethods && (availablePaymentMethods.applePay || availablePaymentMethods.googlePay));
-    $("aviso-carteira").hidden = ok;
-  });
-
-  express.on("click", (event) => { if (validar()) event.resolve(); });
-
-  express.on("confirm", async (event) => {
-    try {
-      const { error: e1 } = await elements.submit();
-      if (e1) throw new Error(e1.message);
-      const { clientSecret } = await api("/api/pay-intent", pedido());
-      const { error } = await stripe.confirmPayment({
-        elements, clientSecret,
-        confirmParams: { return_url: location.origin + "/?pago=1" },
-        redirect: "if_required",
-      });
-      if (error) throw new Error(error.message);
-      mostrarSucesso(true);
-    } catch (e) {
-      event.paymentFailed({ reason: "fail" });
-      setErro(e.message || "O pagamento falhou. Tente outra vez.");
-    }
-  });
-
-  $("b-mbway").addEventListener("click", async () => {
-    if (!validar()) return;
-    const b = $("b-mbway");
-    b.disabled = true; b.textContent = "A abrir o MB WAY…";
-    try {
-      const { url } = await api("/api/mbway", pedido());
-      location.href = url;
-    } catch (e) {
-      setErro(e.message);
-      b.disabled = false; b.textContent = "Pagar com MB WAY";
-    }
-  });
+function mostrarSucesso(d) {
+  const linhas = cfg.itens.filter((p) => qtd[p.id] > 0)
+    .map((p) => `<li><span>${qtd[p.id]} × ${esc(p.nome)}</span><span>${euro.format(p.preco * qtd[p.id] / 100)}</span></li>`).join("");
+  const entrega = `${esc($("morada").value.trim())}, ${esc($("cp").value.trim())} (${esc($("concelho").value)})`;
+  const horario = esc(horarioTxt());
+  const valor = (d.total / 100).toFixed(2).replace(".", ",");
+  const linha = (rotulo, texto, copia) =>
+    `<div class="pag-linha"><dt>${rotulo}</dt><dd>${esc(texto)}</dd>${copia ? `<button type="button" data-copiar="${esc(copia)}">Copiar</button>` : ""}</div>`;
+  const pagar = d.iban
+    ? `<dl class="pag">
+        ${linha("Valor a transferir", euro.format(d.total / 100), valor)}
+        ${linha("IBAN", d.iban, d.iban.replace(/\s/g, ""))}
+        ${d.titular ? linha("Titular", d.titular, "") : ""}
+        ${linha("Na descrição escreva", d.ref, d.ref)}
+        ${d.mbway ? linha("Ou MB WAY para o n.º", d.mbway, d.mbway.replace(/\s/g, "")) : ""}
+        ${d.comprovativo ? linha("Envie o comprovativo para", d.comprovativo, d.comprovativo) : ""}
+      </dl>`
+    : `<p><b>Os dados de pagamento ainda não estão disponíveis.</b> Contacte-nos para os receber.</p>`;
+  $("barra").hidden = true;
+  $("conteudo").innerHTML = `<section class="card sucesso">
+    <div class="ok">
+      <svg width="40" height="40" viewBox="0 0 40 40" aria-hidden="true"><circle cx="20" cy="20" r="20" fill="var(--ok)"/><path d="M11 20.500l6 6 12-13" fill="none" stroke="#fff" stroke-width="3.200" stroke-linecap="round" stroke-linejoin="round"/></svg>
+      <h2>Encomenda ${esc(d.ref)} registada</h2>
+    </div>
+    <p>Para a confirmar, faça a transferência abaixo. A encomenda só fica garantida depois de recebermos o pagamento${d.prazo ? ` (prazo: ${esc(d.prazo)})` : ""}.${d.comprovativo ? " Depois de pagar, envie o comprovativo para o email indicado, com a referência." : ""}</p>
+    ${pagar}
+    <ul>${linhas}<li><strong>Total</strong><strong>${euro.format(d.total / 100)}</strong></li></ul>
+    <p>Entrega em: ${entrega}. Horário preferencial: entre as ${horario}. As entregas são feitas entre 1 e 15 de dezembro, na zona de Lisboa, Oeiras, Cascais e Sintra.</p>
+    <p class="suave">Se indicou um email, enviámos uma cópia destes dados. Pode também guardar uma captura de ecrã.</p>
+    <button type="button" id="outra">Fazer outra encomenda</button></section>`;
+  $("outra").addEventListener("click", () => location.reload());
+  window.scrollTo({ top: 0 });
 }
 
 async function arrancar() {
-  if (new URLSearchParams(location.search).get("pago") === "1") { mostrarSucesso(false); return; }
   try {
-    const r = await fetch("/api/menu");
-    if (!r.ok) throw new Error();
+    if (!ENDERECO_FOLHA || ENDERECO_FOLHA.startsWith("COLE_AQUI")) throw new Error("folha por ligar");
+    const r = await fetch(ENDERECO_FOLHA);
     cfg = await r.json();
+    if (cfg.erro) throw new Error(cfg.erro);
   } catch {
     $("carregar").textContent = "Não foi possível carregar o menu. Atualize a página dentro de momentos.";
     return;
   }
+  if (cfg.fechado) { $("carregar").textContent = "As encomendas estão fechadas de momento. Obrigado pelo interesse!"; return; }
   $("titulo").textContent = cfg.titulo;
   if (cfg.nota) { $("nota").textContent = cfg.nota; $("nota").hidden = false; }
   $("carregar").hidden = true;
   $("conteudo").hidden = false;
   desenhar();
-  iniciarPagamento();
+  $("btn-confirmar").addEventListener("click", async () => {
+    if (!validar()) return;
+    const b = $("btn-confirmar");
+    b.disabled = true; b.textContent = "A registar a encomenda…";
+    try {
+      mostrarSucesso(await enviar(pedido()));
+    } catch (e) {
+      setErro(e.message || "Não foi possível registar a encomenda. Tente outra vez.");
+      b.disabled = false; b.textContent = "Confirmar encomenda";
+    }
+  });
 }
 arrancar();
 </script>
